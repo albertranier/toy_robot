@@ -21,30 +21,40 @@ TESTEXECUTABLE := $(BINDIR)/$(TESTOUT)
 
 VPATH := $(SRCDIR)
 
-bin: $(EXECUTABLE)
+MKDIR_P := mkdir -p
+
+
+build: $(BINDIR) $(OBJDIR) $(EXECUTABLE)
 	@echo "======================== BUILDING TOYROBOT DONE ====================" 
-	
-$(EXECUTABLE): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(EXECUTABLE)
-
-$(OBJDIR)/%.o: %.cpp
-	$(CC) $(CFLAGS) -I$(INCDIR) -c $< -o $@
 
 
-test: $(TESTEXECUTABLE)
+test: $(BINDIR) $(OBJDIR) $(TESTEXECUTABLE)
 	@echo "======================== BUILDING TEST DONE ========================"
 
-$(TESTEXECUTABLE): $(TESTOBJS)
-	$(CC) $(CFLAGS) $(TESTOBJS) -o $(TESTEXECUTABLE)
 
-$(OBJDIR)/%.o: %.cpp
-	$(CC) $(CFLAGS) -I$(INCDIR) -c $< -o $@
-
-
-all: $(EXECUTABLE) $(TESTEXECUTABLE)
+all: $(BINDIR) $(OBJDIR) $(EXECUTABLE) $(TESTEXECUTABLE)
 	@echo "============== BUILDING TOYROBOT and TEST DONE ====================="
 
 
 clean:
 	rm -f $(OBJS) $(EXECUTABLE) $(TESTEXECUTABLE)
 	@echo "======================== CLEANING DONE ============================="
+
+$(BINDIR):
+	@if [ ! -d "$(BINDIR)" ]; then \
+		$(MKDIR_P) $(BINDIR); \
+	fi
+
+$(OBJDIR):
+	@if [ ! -d "$(OBJDIR)" ]; then \
+		$(MKDIR_P) $(OBJDIR); \
+	fi
+
+$(EXECUTABLE): $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $(EXECUTABLE)
+
+$(OBJDIR)/%.o: %.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) -c $< -o $@
+
+$(TESTEXECUTABLE): $(TESTOBJS)
+	$(CC) $(CFLAGS) $(TESTOBJS) -o $(TESTEXECUTABLE)
